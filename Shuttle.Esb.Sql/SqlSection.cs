@@ -19,12 +19,6 @@ namespace Shuttle.Esb.Sql
 			get { return (string) this["idempotenceServiceConnectionStringName"]; }
 		}
 
-		[ConfigurationProperty("scriptFolder", IsRequired = false, DefaultValue = null)]
-		public string ScriptFolder
-		{
-			get { return (string) this["scriptFolder"]; }
-		}
-
 		[ConfigurationProperty("ignoreSubscribe", IsRequired = false, DefaultValue = false)]
 		public bool IgnoreSubscribe
         {
@@ -43,11 +37,12 @@ namespace Shuttle.Esb.Sql
 			{
 				subscriptionManagerConnectionStringName = section.SubscriptionManagerConnectionStringName;
 				idempotenceServiceConnectionStringName = section.IdempotenceServiceConnectionStringName;
-				configuration.ScriptFolder = section.ScriptFolder;
 			    configuration.IgnoreSubscribe = section.IgnoreSubscribe;
 			}
 
-			configuration.SubscriptionManagerConnectionString = GetConnectionString(subscriptionManagerConnectionStringName);
+            configuration.SubscriptionManagerProviderName = GetProviderName(subscriptionManagerConnectionStringName);
+            configuration.SubscriptionManagerConnectionString = GetConnectionString(subscriptionManagerConnectionStringName);
+			configuration.IdempotenceServiceProviderName = GetProviderName(idempotenceServiceConnectionStringName);
 			configuration.IdempotenceServiceConnectionString = GetConnectionString(idempotenceServiceConnectionStringName);
 
 			return configuration;
@@ -58,6 +53,13 @@ namespace Shuttle.Esb.Sql
 			var settings = ConfigurationManager.ConnectionStrings[connectionStringName];
 
 			return settings == null ? string.Empty : settings.ConnectionString;
+		}
+
+		private static string GetProviderName(string connectionStringName)
+		{
+			var settings = ConfigurationManager.ConnectionStrings[connectionStringName];
+
+			return settings == null ? string.Empty : settings.ProviderName;
 		}
 	}
 }

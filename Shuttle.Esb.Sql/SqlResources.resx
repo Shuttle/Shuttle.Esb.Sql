@@ -183,6 +183,10 @@
     <value>Saga data with id '{0}' for type '{1}' does not implement SagaData.</value>
     <comment>{0] = saga data id. {1} = full type name</comment>
   </data>
+  <data name="ProviderNameEmpty" xml:space="preserve">
+    <value>The provider name used by '{0}' is empty.</value>
+    <comment>{0} = name of component requiring the provider name</comment>
+  </data>
   <data name="PurgeError" xml:space="preserve">
     <value>Could not purge queue '{0}'.  Exception: {1}.  Query: {2}</value>
     <comment>{0} = queue uri, {1} = exception message, {2} = query</comment>

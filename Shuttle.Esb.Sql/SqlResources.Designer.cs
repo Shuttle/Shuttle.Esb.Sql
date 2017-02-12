@@ -214,6 +214,15 @@ namespace Shuttle.Esb.Sql {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The provider name used by &apos;{0}&apos; is empty..
+        /// </summary>
+        internal static string ProviderNameEmpty {
+            get {
+                return ResourceManager.GetString("ProviderNameEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not purge queue &apos;{0}&apos;.  Exception: {1}.  Query: {2}.
         /// </summary>
         internal static string PurgeError {

@@ -10,7 +10,7 @@ namespace Shuttle.Esb.Sql.Tests
 		[TestCase(true)]
 		public void Should_not_exceeed_normal_resource_usage(bool isTransactionalEndpoint)
 		{
-			TestResourceUsage("sql://shuttle/{0}", isTransactionalEndpoint);
+			TestResourceUsage(SqlFixture.GetComponentContainer(), "sql://shuttle/{0}", isTransactionalEndpoint);
 		}
 	}
 }

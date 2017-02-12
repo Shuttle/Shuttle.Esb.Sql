@@ -13,17 +13,21 @@ namespace Shuttle.Esb.Sql.Idempotence
 	{
 		private readonly IDatabaseContextFactory _databaseContextFactory;
 
-		private readonly IDatabaseGateway _databaseGateway;
-		private readonly string _idempotenceConnectionString;
+        private readonly string _idempotenceProviderName;
+        private readonly string _idempotenceConnectionString;
+
+        private readonly IDatabaseGateway _databaseGateway;
 		private readonly IScriptProvider _scriptProvider;
 
 		public IdempotenceService(
-			ISqlConfiguration configuration,
+            IServiceBusConfiguration serviceBusConfiguration,
+            ISqlConfiguration sqlConfiguration,
 			IScriptProvider scriptProvider,
 			IDatabaseContextFactory databaseContextFactory,
 			IDatabaseGateway databaseGateway)
 		{
-			Guard.AgainstNull(configuration, "configuration");
+			Guard.AgainstNull(serviceBusConfiguration, "serviceBusConfiguration");
+			Guard.AgainstNull(sqlConfiguration, "sqlConfiguration");
 			Guard.AgainstNull(scriptProvider, "scriptProvider");
 			Guard.AgainstNull(databaseContextFactory, "databaseContextFactory");
 			Guard.AgainstNull(databaseGateway, "databaseGateway");
@@ -32,21 +36,54 @@ namespace Shuttle.Esb.Sql.Idempotence
 			_databaseContextFactory = databaseContextFactory;
 			_databaseGateway = databaseGateway;
 
-			_idempotenceConnectionString = configuration.IdempotenceServiceConnectionString;
+		    _idempotenceProviderName = sqlConfiguration.IdempotenceServiceProviderName;
+
+            if (string.IsNullOrEmpty(_idempotenceProviderName))
+            {
+                throw new ConfigurationErrorsException(string.Format(SqlResources.ProviderNameEmpty,
+                    "IdempotenceService"));
+            }
+
+            _idempotenceConnectionString = sqlConfiguration.IdempotenceServiceConnectionString;
 
 			if (string.IsNullOrEmpty(_idempotenceConnectionString))
 			{
 				throw new ConfigurationErrorsException(string.Format(SqlResources.ConnectionStringEmpty,
 					"IdempotenceService"));
 			}
-		}
 
-		public ProcessingStatus ProcessingStatus(TransportMessage transportMessage)
+            Guard.AgainstNull(sqlConfiguration, "configuration");
+
+            using (
+                var connection = _databaseContextFactory.Create(_idempotenceProviderName,
+                    _idempotenceConnectionString))
+            using (var transaction = connection.BeginTransaction())
+            {
+                if (_databaseGateway.GetScalarUsing<int>(
+                    RawQuery.Create(
+                        _scriptProvider.Get(
+                            Script.IdempotenceServiceExists))) != 1)
+                {
+                    throw new InvalidOperationException(SqlResources.IdempotenceDatabaseNotConfigured);
+                }
+
+                _databaseGateway.ExecuteUsing(
+                    RawQuery.Create(
+                        _scriptProvider.Get(
+                            Script.IdempotenceInitialize))
+                        .AddParameterValue(IdempotenceColumns.InboxWorkQueueUri,
+                            serviceBusConfiguration.Inbox.WorkQueue.Uri.ToString()));
+
+                transaction.CommitTransaction();
+            }
+        }
+
+        public ProcessingStatus ProcessingStatus(TransportMessage transportMessage)
 		{
 			try
 			{
 				using (
-					var connection = _databaseContextFactory.Create(SqlConfiguration.ProviderName,
+					var connection = _databaseContextFactory.Create(_idempotenceProviderName,
 						_idempotenceConnectionString))
 				using (var transaction = connection.BeginTransaction())
 				{
@@ -113,7 +150,7 @@ namespace Shuttle.Esb.Sql.Idempotence
 		public void ProcessingCompleted(TransportMessage transportMessage)
 		{
 			using (
-				var connection = _databaseContextFactory.Create(SqlConfiguration.ProviderName,
+				var connection = _databaseContextFactory.Create(_idempotenceProviderName,
 					_idempotenceConnectionString))
 			using (var transaction = connection.BeginTransaction())
 			{
@@ -130,7 +167,7 @@ namespace Shuttle.Esb.Sql.Idempotence
 		{
 			var result = new List<Stream>();
 
-			using (_databaseContextFactory.Create(SqlConfiguration.ProviderName, _idempotenceConnectionString))
+			using (_databaseContextFactory.Create(_idempotenceProviderName, _idempotenceConnectionString))
 			{
 				var rows = _databaseGateway.GetRowsUsing(
 					RawQuery.Create(_scriptProvider.Get(Script.IdempotenceGetDeferredMessages))
@@ -148,7 +185,7 @@ namespace Shuttle.Esb.Sql.Idempotence
 		public void DeferredMessageSent(TransportMessage processingTransportMessage,
 			TransportMessage deferredTransportMessage)
 		{
-			using (_databaseContextFactory.Create(SqlConfiguration.ProviderName, _idempotenceConnectionString))
+			using (_databaseContextFactory.Create(_idempotenceProviderName, _idempotenceConnectionString))
 			{
 				_databaseGateway.ExecuteUsing(
 					RawQuery.Create(_scriptProvider.Get(Script.IdempotenceDeferredMessageSent))
@@ -158,7 +195,7 @@ namespace Shuttle.Esb.Sql.Idempotence
 
 		public void MessageHandled(TransportMessage transportMessage)
 		{
-			using (_databaseContextFactory.Create(SqlConfiguration.ProviderName, _idempotenceConnectionString))
+			using (_databaseContextFactory.Create(_idempotenceProviderName, _idempotenceConnectionString))
 			{
 				_databaseGateway.ExecuteUsing(
 					RawQuery.Create(_scriptProvider.Get(Script.IdempotenceMessageHandled))
@@ -166,37 +203,9 @@ namespace Shuttle.Esb.Sql.Idempotence
 			}
 		}
 
-	    public IdempotenceService(IServiceBusConfiguration configuration)
-	    {
-            Guard.AgainstNull(configuration,"configuration");
-
-            using (
-                var connection = _databaseContextFactory.Create(SqlConfiguration.ProviderName,
-                    _idempotenceConnectionString))
-            using (var transaction = connection.BeginTransaction())
-            {
-                if (_databaseGateway.GetScalarUsing<int>(
-                    RawQuery.Create(
-                        _scriptProvider.Get(
-                            Script.IdempotenceServiceExists))) != 1)
-                {
-                    throw new InvalidOperationException(SqlResources.IdempotenceDatabaseNotConfigured);
-                }
-
-                _databaseGateway.ExecuteUsing(
-                    RawQuery.Create(
-                        _scriptProvider.Get(
-                            Script.IdempotenceInitialize))
-                        .AddParameterValue(IdempotenceColumns.InboxWorkQueueUri,
-                            configuration.Inbox.WorkQueue.Uri.ToString()));
-
-                transaction.CommitTransaction();
-            }
-        }
-
         public bool AddDeferredMessage(TransportMessage processingTransportMessage, TransportMessage deferredTransportMessage, Stream deferredTransportMessageStream)
         {
-            using (_databaseContextFactory.Create(SqlConfiguration.ProviderName, _idempotenceConnectionString))
+            using (_databaseContextFactory.Create(_idempotenceProviderName, _idempotenceConnectionString))
             {
                 _databaseGateway.ExecuteUsing(
                     RawQuery.Create(_scriptProvider.Get(Script.IdempotenceSendDeferredMessage))

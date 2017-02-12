@@ -2,9 +2,10 @@ namespace Shuttle.Esb.Sql
 {
 	public interface ISqlConfiguration
 	{
+		string SubscriptionManagerProviderName { get; }
 		string SubscriptionManagerConnectionString { get; }
+		string IdempotenceServiceProviderName { get; }
 		string IdempotenceServiceConnectionString { get; }
-		string ScriptFolder { get; }
         bool IgnoreSubscribe { get; }
 	}
 }

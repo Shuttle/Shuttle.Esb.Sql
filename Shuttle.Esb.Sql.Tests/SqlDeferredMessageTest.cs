@@ -10,7 +10,7 @@ namespace Shuttle.Esb.Sql.Tests
 		[TestCase(true)]
 		public void Should_be_able_to_perform_full_processing(bool isTransactionalEndpoint)
 		{
-			TestDeferredProcessing("sql://shuttle/{0}", isTransactionalEndpoint);
+			TestDeferredProcessing(SqlFixture.GetComponentContainer(), "sql://shuttle/{0}", isTransactionalEndpoint);
 		}
 	}
 }

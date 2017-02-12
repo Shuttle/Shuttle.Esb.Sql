@@ -20,9 +20,10 @@ namespace Shuttle.Esb.Sql
 	    private readonly IScriptProvider _scriptProvider;
 
 		private readonly Dictionary<string, List<string>> _subscribers = new Dictionary<string, List<string>>();
+		private readonly string _subscriptionProviderName;
 		private readonly string _subscriptionConnectionString;
 
-		private IServiceBusConfiguration _serviceBusConfiguration;
+		private readonly IServiceBusConfiguration _serviceBusConfiguration;
 
 		public SubscriptionManager(IServiceBusConfiguration serviceBusConfiguration, ISqlConfiguration configuration, IScriptProvider scriptProvider,
 			IDatabaseContextFactory databaseContextFactory, IDatabaseGateway databaseGateway)
@@ -39,6 +40,14 @@ namespace Shuttle.Esb.Sql
 			_databaseContextFactory = databaseContextFactory;
 			_databaseGateway = databaseGateway;
 
+			_subscriptionProviderName = configuration.SubscriptionManagerProviderName;
+
+			if (string.IsNullOrEmpty(_subscriptionProviderName))
+			{
+				throw new ConfigurationErrorsException(string.Format(SqlResources.ProviderNameEmpty,
+					"SubscriptionManager"));
+			}
+
 			_subscriptionConnectionString = configuration.SubscriptionManagerConnectionString;
 
 			if (string.IsNullOrEmpty(_subscriptionConnectionString))
@@ -47,7 +56,7 @@ namespace Shuttle.Esb.Sql
 					"SubscriptionManager"));
 			}
 
-            using (_databaseContextFactory.Create(SqlConfiguration.ProviderName, _subscriptionConnectionString))
+            using (_databaseContextFactory.Create(_subscriptionProviderName, _subscriptionConnectionString))
             {
                 if (_databaseGateway.GetScalarUsing<int>(
                     RawQuery.Create(
@@ -109,7 +118,7 @@ namespace Shuttle.Esb.Sql
                 throw new InvalidOperationException(EsbResources.SubscribeWithNoInboxException);
 		    }
 
-		    using (_databaseContextFactory.Create(SqlConfiguration.ProviderName, _subscriptionConnectionString))
+		    using (_databaseContextFactory.Create(_subscriptionProviderName, _subscriptionConnectionString))
 			{
 				foreach (var messageType in messageTypeFullNames)
 				{
@@ -157,7 +166,7 @@ namespace Shuttle.Esb.Sql
 					{
 						DataTable table;
 
-						using (_databaseContextFactory.Create(SqlConfiguration.ProviderName, _subscriptionConnectionString))
+						using (_databaseContextFactory.Create(_subscriptionProviderName, _subscriptionConnectionString))
 						{
 							table = _databaseGateway.GetDataTableFor(
 								RawQuery.Create(
