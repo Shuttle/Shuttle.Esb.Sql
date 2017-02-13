@@ -10,7 +10,7 @@ namespace Shuttle.Esb.Sql.Tests
 		[TestCase(true)]
 		public void Should_be_able_handle_errors(bool isTransactionalEndpoint)
 		{
-			TestOutboxSending(SqlFixture.GetComponentContainer(), "sql://shuttle/{0}", isTransactionalEndpoint);
+			TestOutboxSending(SqlFixture.GetComponentContainer(false), "sql://shuttle/{0}", isTransactionalEndpoint);
 		}
 	}
 }

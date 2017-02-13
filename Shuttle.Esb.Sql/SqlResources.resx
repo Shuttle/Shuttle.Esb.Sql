@@ -183,6 +183,9 @@
     <value>Saga data with id '{0}' for type '{1}' does not implement SagaData.</value>
     <comment>{0] = saga data id. {1} = full type name</comment>
   </data>
+  <data name="NoInboxException" xml:space="preserve">
+    <value>The idempotence service cannot be used as there is no inbox configured for the service bus.</value>
+  </data>
   <data name="ProviderNameEmpty" xml:space="preserve">
     <value>The provider name used by '{0}' is empty.</value>
     <comment>{0} = name of component requiring the provider name</comment>

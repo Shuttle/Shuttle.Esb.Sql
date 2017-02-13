@@ -74,8 +74,8 @@
       <HintPath>..\packages\Shuttle.Esb.7.0.45\lib\net45-full\Shuttle.Esb.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Shuttle.Esb.Tests, Version=7.0.52.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shuttle.Esb.Tests.7.0.52\lib\net45-full\Shuttle.Esb.Tests.dll</HintPath>
+    <Reference Include="Shuttle.Esb.Tests, Version=7.0.56.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Esb.Tests.7.0.56\lib\net45-full\Shuttle.Esb.Tests.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Configuration" />

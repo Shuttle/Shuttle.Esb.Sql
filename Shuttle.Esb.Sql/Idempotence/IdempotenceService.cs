@@ -32,7 +32,12 @@ namespace Shuttle.Esb.Sql.Idempotence
 			Guard.AgainstNull(databaseContextFactory, "databaseContextFactory");
 			Guard.AgainstNull(databaseGateway, "databaseGateway");
 
-			_scriptProvider = scriptProvider;
+		    if (!serviceBusConfiguration.HasInbox)
+		    {
+                throw new InvalidOperationException(SqlResources.NoInboxException);
+		    }
+
+		    _scriptProvider = scriptProvider;
 			_databaseContextFactory = databaseContextFactory;
 			_databaseGateway = databaseGateway;
 

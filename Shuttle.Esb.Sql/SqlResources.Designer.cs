@@ -214,6 +214,15 @@ namespace Shuttle.Esb.Sql {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The idempotence service cannot be used as there is no inbox configured for the service bus..
+        /// </summary>
+        internal static string NoInboxException {
+            get {
+                return ResourceManager.GetString("NoInboxException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The provider name used by &apos;{0}&apos; is empty..
         /// </summary>
         internal static string ProviderNameEmpty {

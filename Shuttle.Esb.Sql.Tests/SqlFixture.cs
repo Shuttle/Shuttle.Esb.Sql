@@ -11,6 +11,11 @@ namespace Shuttle.Esb.Sql.Tests
     {
         public static ComponentContainer GetComponentContainer()
         {
+            return GetComponentContainer(true);
+        }
+
+        public static ComponentContainer GetComponentContainer(bool registerIdempotenceService)
+        {
             var container = new WindsorComponentContainer(new WindsorContainer());
 
             container.Register<IScriptProviderConfiguration>(new ScriptProviderConfiguration
@@ -26,7 +31,11 @@ namespace Shuttle.Esb.Sql.Tests
             container.Register<IDbConnectionFactory, DbConnectionFactory>();
             container.Register<IDbCommandFactory, DbCommandFactory>();
             container.Register<IDatabaseGateway, DatabaseGateway>();
-            container.Register<IIdempotenceService, IdempotenceService>();
+
+            if (registerIdempotenceService)
+            {
+                container.Register<IIdempotenceService, IdempotenceService>();
+            }
 
             return new ComponentContainer(container, () => container);
         }
