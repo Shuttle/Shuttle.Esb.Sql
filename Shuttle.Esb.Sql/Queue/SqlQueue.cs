@@ -256,14 +256,17 @@ namespace Shuttle.Esb.Sql
 
 		private void BuildQueries()
 		{
-			_existsQuery = RawQuery.Create(_scriptProvider.Get(Script.QueueExists, _tableName));
-			_createQuery = RawQuery.Create(_scriptProvider.Get(Script.QueueCreate, _tableName));
-			_dropQuery = RawQuery.Create(_scriptProvider.Get(Script.QueueDrop, _tableName));
-			_purgeQuery = RawQuery.Create(_scriptProvider.Get(Script.QueuePurge, _tableName));
-			_countQuery = RawQuery.Create(_scriptProvider.Get(Script.QueueCount, _tableName));
-			_enqueueQueryStatement = _scriptProvider.Get(Script.QueueEnqueue, _tableName);
-			_removeQueryStatement = _scriptProvider.Get(Script.QueueRemove, _tableName);
-			_dequeueIdQueryStatement = _scriptProvider.Get(Script.QueueDequeueId, _tableName);
+			using (_databaseContextFactory.Create(_connectionName))
+			{
+				_existsQuery = RawQuery.Create(_scriptProvider.Get(Script.QueueExists, _tableName));
+				_createQuery = RawQuery.Create(_scriptProvider.Get(Script.QueueCreate, _tableName));
+				_dropQuery = RawQuery.Create(_scriptProvider.Get(Script.QueueDrop, _tableName));
+				_purgeQuery = RawQuery.Create(_scriptProvider.Get(Script.QueuePurge, _tableName));
+				_countQuery = RawQuery.Create(_scriptProvider.Get(Script.QueueCount, _tableName));
+				_enqueueQueryStatement = _scriptProvider.Get(Script.QueueEnqueue, _tableName);
+				_removeQueryStatement = _scriptProvider.Get(Script.QueueRemove, _tableName);
+				_dequeueIdQueryStatement = _scriptProvider.Get(Script.QueueDequeueId, _tableName);
+			}
 		}
 
 		public void Acknowledge(object acknowledgementToken)

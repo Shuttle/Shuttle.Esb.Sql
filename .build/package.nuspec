@@ -20,7 +20,7 @@
 		</dependencies>
 	</metadata>
 	<files>
-		<file src="..\..\..\Shuttle.Esb.Sql\Scripts\**\*.sql" target="scripts" />
+		<file src="..\..\..\Shuttle.Esb.Sql\.scripts\**\*.sql" target="scripts" />
 		<file src="lib\**\*.*" target="lib" />
 	</files>
 </package>

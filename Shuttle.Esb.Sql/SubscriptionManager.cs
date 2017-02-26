@@ -25,9 +25,12 @@ namespace Shuttle.Esb.Sql
 
 		private readonly IServiceBusConfiguration _serviceBusConfiguration;
 
-		public SubscriptionManager(IServiceBusConfiguration serviceBusConfiguration, ISqlConfiguration configuration, IScriptProvider scriptProvider,
+		private bool _deferSubscribtions = true;
+
+		public SubscriptionManager(IServiceBusEvents events, IServiceBusConfiguration serviceBusConfiguration, ISqlConfiguration configuration, IScriptProvider scriptProvider,
 			IDatabaseContextFactory databaseContextFactory, IDatabaseGateway databaseGateway)
 		{
+			Guard.AgainstNull(events, "events");
 			Guard.AgainstNull(serviceBusConfiguration, "serviceBusConfiguration");
 			Guard.AgainstNull(configuration, "configuration");
 			Guard.AgainstNull(scriptProvider, "scriptProvider");
@@ -39,6 +42,8 @@ namespace Shuttle.Esb.Sql
 		    _scriptProvider = scriptProvider;
 			_databaseContextFactory = databaseContextFactory;
 			_databaseGateway = databaseGateway;
+
+			events.Started += ServiceBus_Started;
 
 			_subscriptionProviderName = configuration.SubscriptionManagerProviderName;
 
@@ -78,28 +83,28 @@ namespace Shuttle.Esb.Sql
                     }
                 }
             }
-
-            if (HasDeferredSubscriptions)
-            {
-                Subscribe(_deferredSubscriptions);
-            }
         }
 
-        protected bool HasDeferredSubscriptions
+		private void ServiceBus_Started(object sender, EventArgs e)
 		{
-			get { return _deferredSubscriptions.Count > 0; }
+			_deferSubscribtions = false;
+
+			if (HasDeferredSubscriptions)
+			{
+				Subscribe(_deferredSubscriptions);
+			}
 		}
 
-		protected bool Started
+		protected bool HasDeferredSubscriptions
 		{
-			get { return _serviceBusConfiguration != null; }
+			get { return _deferredSubscriptions.Count > 0; }
 		}
 
 	    public void Subscribe(IEnumerable<string> messageTypeFullNames)
 	    {
 	        Guard.AgainstNull(messageTypeFullNames, "messageTypeFullNames");
 
-	        if (!Started)
+	        if (_deferSubscribtions)
 	        {
 	            _deferredSubscriptions.AddRange(messageTypeFullNames);
 

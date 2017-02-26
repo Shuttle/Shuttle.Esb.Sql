@@ -1,11 +1,26 @@
-Shuttle.Esb.Sql
-=====================
+# Shuttle.Esb.Sql
 
-Microsoft SQL Server implementation for use with Shuttl.Esb:
+Microsoft Sql RDBS implementation for use with Shuttl.Esb:
 
 - `SubscriptionManager` implements `ISubscriptionManager`
 - `IdempotenceService` implements `iIdempotenceService`
 - `SqlQueue` implements `IQueue`
+
+# Supported providers
+
+In order to use the relevant provider you need to register an `IScriptProviderConfiguration` that tells the various components where to find the relevant scripts:
+
+```
+var container = new WindsorComponentContainer(new WindsorContainer());
+
+container.Register<IScriptProviderConfiguration>(new ScriptProviderConfiguration
+{
+    ResourceAssembly = typeof (SqlQueue).Assembly,
+    ResourceNameFormat = "Shuttle.Esb.Sql.Scripts.System.Data.SqlClient.{ScriptName}.sql"
+});
+```
+
+Currently only the `System.Data.SqlClient` provider name is supported but this can easily be extended.  Feel free to give it a bash and please send a pull request if you *do* go this route.  You are welcome to create an issue and assistance will be provided where able.
 
 # SqlQueue
 
@@ -35,7 +50,6 @@ In addition to this there is also a Sql Server specific section (defaults specif
   <sqlServer
 	subscriptionManagerConnectionStringName="Subscription"
 	idempotenceServiceConnectionStringName="Idempotence"
-	scriptFolder=""
   />
   .
   .

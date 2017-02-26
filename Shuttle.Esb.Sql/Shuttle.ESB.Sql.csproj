@@ -80,16 +80,16 @@
     <DefineConstants>$(DefineConstants);NET461FULL</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Shuttle.Core.Data, Version=4.2.10.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shuttle.Core.Data.4.2.10\lib\net40-full\Shuttle.Core.Data.dll</HintPath>
+    <Reference Include="Shuttle.Core.Data, Version=4.2.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Core.Data.4.2.11\lib\net40-full\Shuttle.Core.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Shuttle.Core.Infrastructure, Version=4.2.54.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shuttle.Core.Infrastructure.4.2.54\lib\net40-full\Shuttle.Core.Infrastructure.dll</HintPath>
+    <Reference Include="Shuttle.Core.Infrastructure, Version=4.2.55.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Core.Infrastructure.4.2.55\lib\net40-full\Shuttle.Core.Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Shuttle.Esb, Version=7.0.45.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shuttle.Esb.7.0.45\lib\net40-full\Shuttle.Esb.dll</HintPath>
+    <Reference Include="Shuttle.Esb, Version=7.0.46.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Esb.7.0.46\lib\net40-full\Shuttle.Esb.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -102,9 +102,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Definitions\IdempotenceColumns.cs" />
-    <Compile Include="Idempotence\IdempotenceService.cs" />
+    <Compile Include="IdempotenceService.cs" />
+    <Compile Include="IScriptProvider.cs" />
+    <Compile Include="IScriptProviderConfiguration.cs" />
     <Compile Include="ISqlConfiguration.cs" />
     <Compile Include="Queue\SqlUriParser.cs" />
+    <Compile Include="ScriptProvider.cs" />
+    <Compile Include="ScriptProviderConfiguration.cs" />
     <Compile Include="SqlConfiguration.cs" />
     <Compile Include="SqlSection.cs" />
     <Compile Include="SubscriptionManager.cs" />
@@ -131,36 +135,36 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\IdempotenceComplete.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\IdempotenceDeferredMessageSent.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\IdempotenceGetDeferredMessages.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\IdempotenceHasCompleted.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\IdempotenceInitialize.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\IdempotenceIsMessageHandled.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\IdempotenceIsProcessing.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\IdempotenceMessageHandled.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\IdempotenceProcessing.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\IdempotenceSendDeferredMessage.sql" />
-    <Content Include="Scripts\System.Data.SqlClient\IdempotenceServiceCreate.sql">
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\SubscriptionManagerExists.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\IdempotenceComplete.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\IdempotenceDeferredMessageSent.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\IdempotenceGetDeferredMessages.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\IdempotenceHasCompleted.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\IdempotenceInitialize.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\IdempotenceIsMessageHandled.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\IdempotenceIsProcessing.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\IdempotenceMessageHandled.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\IdempotenceProcessing.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\IdempotenceSendDeferredMessage.sql" />
+    <Content Include=".scripts\System.Data.SqlClient\IdempotenceServiceCreate.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\IdempotenceServiceExists.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\QueueCount.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\QueueCreate.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\QueueDequeue.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\QueueDequeueId.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\QueueDrop.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\QueueEnqueue.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\QueueExists.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\QueuePurge.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\QueueRead.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\QueueRemove.sql" />
-    <Content Include="Scripts\System.Data.SqlClient\SubscriptionManagerCreate.sql">
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\QueueCount.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\QueueCreate.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\QueueDequeue.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\QueueDequeueId.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\QueueDrop.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\QueueEnqueue.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\QueueExists.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\QueuePurge.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\QueueRead.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\QueueRemove.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\IdempotenceServiceExists.sql" />
+    <Content Include=".scripts\System.Data.SqlClient\SubscriptionManagerCreate.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\SubscriptionManagerExists.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\SubscriptionManagerInboxWorkQueueUris.sql" />
-    <EmbeddedResource Include="Scripts\System.Data.SqlClient\SubscriptionManagerSubscribe.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\SubscriptionManagerInboxWorkQueueUris.sql" />
+    <EmbeddedResource Include=".scripts\System.Data.SqlClient\SubscriptionManagerSubscribe.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

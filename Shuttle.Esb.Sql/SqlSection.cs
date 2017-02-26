@@ -27,7 +27,7 @@ namespace Shuttle.Esb.Sql
 
 		public static SqlConfiguration Configuration()
 		{
-			var section = ConfigurationSectionProvider.Open<SqlSection>("shuttle", "sqlServer");
+			var section = ConfigurationSectionProvider.Open<SqlSection>("shuttle", "sql");
 			var configuration = new SqlConfiguration();
 
 			var subscriptionManagerConnectionStringName = "Subscription";

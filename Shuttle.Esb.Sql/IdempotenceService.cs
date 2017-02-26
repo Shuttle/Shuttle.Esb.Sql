@@ -7,7 +7,7 @@ using System.Threading;
 using Shuttle.Core.Data;
 using Shuttle.Core.Infrastructure;
 
-namespace Shuttle.Esb.Sql.Idempotence
+namespace Shuttle.Esb.Sql
 {
 	public class IdempotenceService : IIdempotenceService
 	{
