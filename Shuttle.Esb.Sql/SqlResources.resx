@@ -121,6 +121,10 @@
     <value>The connection string used by '{0}' is empty.</value>
     <comment>{0} = name of component requiring the connecting string</comment>
   </data>
+  <data name="ConnectionStringMissing" xml:space="preserve">
+    <value>Could not find a connection string with name '{0}'.</value>
+    <comment>{0} = the name of the missing connection string</comment>
+  </data>
   <data name="CountError" xml:space="preserve">
     <value>Could not get count for queue '{0}'.  Exception: {1}.  Query: {2}</value>
     <comment>{0} = queue uri, {1} = exception message, {2} = query</comment>

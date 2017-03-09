@@ -70,6 +70,15 @@ namespace Shuttle.Esb.Sql {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not find a connection string with name &apos;{0}&apos;..
+        /// </summary>
+        internal static string ConnectionStringMissing {
+            get {
+                return ResourceManager.GetString("ConnectionStringMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not get count for queue &apos;{0}&apos;.  Exception: {1}.  Query: {2}.
         /// </summary>
         internal static string CountError {

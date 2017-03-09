@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using Shuttle.Core.Infrastructure;
 
 namespace Shuttle.Esb.Sql
@@ -21,7 +22,7 @@ namespace Shuttle.Esb.Sql
 
 		[ConfigurationProperty("ignoreSubscribe", IsRequired = false, DefaultValue = false)]
 		public bool IgnoreSubscribe
-        {
+		{
 			get { return (bool) this["ignoreSubscribe"]; }
 		}
 
@@ -37,29 +38,27 @@ namespace Shuttle.Esb.Sql
 			{
 				subscriptionManagerConnectionStringName = section.SubscriptionManagerConnectionStringName;
 				idempotenceServiceConnectionStringName = section.IdempotenceServiceConnectionStringName;
-			    configuration.IgnoreSubscribe = section.IgnoreSubscribe;
+				configuration.IgnoreSubscribe = section.IgnoreSubscribe;
 			}
 
-            configuration.SubscriptionManagerProviderName = GetProviderName(subscriptionManagerConnectionStringName);
-            configuration.SubscriptionManagerConnectionString = GetConnectionString(subscriptionManagerConnectionStringName);
-			configuration.IdempotenceServiceProviderName = GetProviderName(idempotenceServiceConnectionStringName);
-			configuration.IdempotenceServiceConnectionString = GetConnectionString(idempotenceServiceConnectionStringName);
+			configuration.SubscriptionManagerProviderName = GetSettings(subscriptionManagerConnectionStringName).ProviderName;
+			configuration.SubscriptionManagerConnectionString = GetSettings(subscriptionManagerConnectionStringName).ConnectionString;
+			configuration.IdempotenceServiceProviderName = GetSettings(idempotenceServiceConnectionStringName).ProviderName;
+			configuration.IdempotenceServiceConnectionString = GetSettings(idempotenceServiceConnectionStringName).ConnectionString;
 
 			return configuration;
 		}
 
-		private static string GetConnectionString(string connectionStringName)
+		private static ConnectionStringSettings GetSettings(string connectionStringName)
 		{
 			var settings = ConfigurationManager.ConnectionStrings[connectionStringName];
 
-			return settings == null ? string.Empty : settings.ConnectionString;
-		}
+			if (settings == null)
+			{
+				throw new InvalidOperationException(string.Format(SqlResources.ConnectionStringMissing, connectionStringName));
+			}
 
-		private static string GetProviderName(string connectionStringName)
-		{
-			var settings = ConfigurationManager.ConnectionStrings[connectionStringName];
-
-			return settings == null ? string.Empty : settings.ProviderName;
+			return settings;
 		}
 	}
 }
