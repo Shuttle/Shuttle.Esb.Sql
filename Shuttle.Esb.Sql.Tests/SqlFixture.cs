@@ -17,16 +17,6 @@ namespace Shuttle.Esb.Sql.Tests
         {
             var container = new WindsorComponentContainer(new WindsorContainer());
 
-            container.Register<IScriptProviderConfiguration, ScriptProviderConfiguration>();
-			container.Register<IScriptProvider, ScriptProvider>();
-
-			container.Register<ISqlConfiguration>(SqlSection.Configuration());
-            container.Register<IDatabaseContextCache, ThreadStaticDatabaseContextCache>();
-            container.Register<IDatabaseContextFactory, DatabaseContextFactory>();
-            container.Register<IDbConnectionFactory, DbConnectionFactory>();
-            container.Register<IDbCommandFactory, DbCommandFactory>();
-            container.Register<IDatabaseGateway, DatabaseGateway>();
-
             if (registerIdempotenceService)
             {
                 container.Register<IIdempotenceService, IdempotenceService>();
