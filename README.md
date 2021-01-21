@@ -1,5 +1,12 @@
 # Shuttle.Esb.Sql
 
+**Deprecated**: This package is no longer maintained.  Please make use of the individual packages as you need them:
+
+- [Shuttle.Esb.Sql.Queue](https://github.com/Shuttle/Shuttle.Esb.Sql.Queue) / [Nuget](https://www.nuget.org/packages/Shuttle.Esb.Sql.Queue/)
+- [Shuttle.Esb.Sql.Subscription](https://github.com/Shuttle/Shuttle.Esb.Sql.Subscription) / [Nuget](https://www.nuget.org/packages/Shuttle.Esb.Sql.Subscription/)
+- [Shuttle.Esb.Sql.Idempotence](https://github.com/Shuttle/Shuttle.Esb.Sql.Idempotence) / [Nuget](https://www.nuget.org/packages/Shuttle.Esb.Sql.Idempotence/)
+
+
 Microsoft Sql RDBS implementation for use with Shuttl.Esb:
 
 - `SubscriptionManager` implements `ISubscriptionManager`
